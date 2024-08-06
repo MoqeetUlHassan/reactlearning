@@ -1,11 +1,12 @@
 
 import Header from './Header';
 import AddItem from './AddItem';
+import Square from './Square';
+import ColorInput from './ColorInput';
 import SearchItem from './SearchItem';
 import Content from './Content';
 import Footer from './Footer';
 import { useState } from 'react'
-import ItemList from './ItemList';
 
 function App() {
 
@@ -14,6 +15,10 @@ function App() {
   const [search, setSearch] = useState('');
 
   const [newItem, setNewItem] = useState('')
+
+  const [colorValue, setColorValue] = useState('')
+  const [hexValue, setHexValue] = useState('')
+  const [isDarkText, setIsDarkText] = useState(true)
 
   const setAndSaveItems = (newItems) => {
     setItems(newItems);
@@ -41,7 +46,7 @@ function App() {
   }
 
   const handleDelete = (id) => {
-    const listItems = items.filter((item) => item.id != id);
+    const listItems = items.filter((item) => item.id !== id);
     setAndSaveItems(listItems);
   }
 
@@ -68,6 +73,18 @@ function App() {
         newItem={newItem}
         setNewItem={setNewItem}
         handleSubmit={handleSubmit}
+      />
+      <Square
+        colorValue={colorValue}
+        hexValue = {hexValue}
+        isDarkText = {isDarkText}
+      />
+      <ColorInput
+        colorValue={colorValue}
+        setColorValue={setColorValue}
+        setHexValue ={setHexValue}
+        isDarkText ={isDarkText}
+        setIsDarkText = {setIsDarkText}
       />
       <Footer
         length={items.length}
