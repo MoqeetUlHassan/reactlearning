@@ -6,24 +6,49 @@ import ColorInput from './ColorInput';
 import SearchItem from './SearchItem';
 import Content from './Content';
 import Footer from './Footer';
-import { useState , useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
 
-  const [items, setItems] = useState(  
-    JSON.parse(localStorage.getItem('shoppinglist'))||[]
+  const API_URL = 'http://localhost:3500/items';
+  const [items, setItems] = useState(
+    []
+    // JSON.parse(localStorage.getItem('shoppinglist')) || []
   );
 
   const [search, setSearch] = useState('');
+  const [fetchError, setFetchError] = useState(null);
 
   const [newItem, setNewItem] = useState('')
   const [colorValue, setColorValue] = useState('')
   const [hexValue, setHexValue] = useState('')
   const [isDarkText, setIsDarkText] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(()=>{
-    localStorage.setItem('shoppinglist', JSON.stringify(items));
-  },[items])
+  useEffect(() => {
+    // localStorage.setItem('shoppinglist', JSON.stringify(items));
+    const fetchItems = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw Error('Did not recieve expected data')
+        const listItems = await response.json();
+        setItems(listItems);
+        setFetchError(null);
+
+      } catch (err) {
+        setFetchError(err.message);
+      }
+      finally {
+        setIsLoading(false);
+      }
+    }
+    setTimeout(() => {
+      (async () => await fetchItems())();
+    }, 2000);
+
+  }, [
+    // items
+  ])
 
 
   const addItem = (item) => {
@@ -61,15 +86,18 @@ function App() {
         search={search}
         setSearch={setSearch}
       />
-      <Content
-        items={items.filter(
-          item => ((item.item).toLowerCase()
-          ).includes(search.toLowerCase())
-        )}
-        handleCheck={handleCheck}
-        handleDelete={handleDelete}
-      />
-
+      <main>
+        {isLoading && <p>Loading items...</p> }
+        {fetchError && <p style={{ color: "red" }}>{`Error: ${fetchError}`}</p>}
+        {!fetchError && !isLoading && <Content
+          items={items.filter(
+            item => ((item.item).toLowerCase()
+            ).includes(search.toLowerCase())
+          )}
+          handleCheck={handleCheck}
+          handleDelete={handleDelete}
+        />}
+      </main>
       <AddItem
         newItem={newItem}
         setNewItem={setNewItem}
@@ -77,15 +105,15 @@ function App() {
       />
       <Square
         colorValue={colorValue}
-        hexValue = {hexValue}
-        isDarkText = {isDarkText}
+        hexValue={hexValue}
+        isDarkText={isDarkText}
       />
       <ColorInput
         colorValue={colorValue}
         setColorValue={setColorValue}
-        setHexValue ={setHexValue}
-        isDarkText ={isDarkText}
-        setIsDarkText = {setIsDarkText}
+        setHexValue={setHexValue}
+        isDarkText={isDarkText}
+        setIsDarkText={setIsDarkText}
       />
       <Footer
         length={items.length}
