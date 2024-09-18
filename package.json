@@ -1,8 +1,7 @@
 {
   "name": "reactlearning",
   "version": "0.1.0",
-  "homepage": "https://MoqeetUlHassan.github.io/reactlearning
-",
+  "homepage": "https://MoqeetUlHassan.github.io/reactlearning",
   "private": true,
   "dependencies": {
     "colornames": "^1.1.1",
